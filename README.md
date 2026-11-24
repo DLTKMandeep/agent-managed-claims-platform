@@ -33,7 +33,8 @@ The project follows the AI-Driven Development Lifecycle. AI proposes the work at
 | --- | --- | --- | --- |
 | Inception | Intake | Approved 2026-11-24 | [01-intake-intent.md](aidlc/01-intake-intent.md) |
 | Inception | Requirements | Approved 2026-11-24 | [02-requirements.md](aidlc/02-requirements.md) |
-| Construction | Dev | Next | |
+| Construction | Dev: design | Awaiting approval | [03-design.md](aidlc/03-design.md) |
+| Construction | Dev: code | Not started | |
 | Construction | Build | Not started | |
 | Construction | Test | Not started | |
 | Operations | Deploy | Not started | |
@@ -45,4 +46,4 @@ The project follows the AI-Driven Development Lifecycle. AI proposes the work at
 aidlc/        Approved artifacts for each AI-DLC stage
 ```
 
-Code folders are added in the Dev stage.
+Code folders are added once the design is approved.
