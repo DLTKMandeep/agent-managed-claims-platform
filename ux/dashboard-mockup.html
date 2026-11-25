@@ -92,6 +92,25 @@ button.primary{background:var(--accent);border-color:var(--accent);color:var(--c
 .stat b{display:block;font-size:24px;line-height:1.2}
 .stat span{color:var(--muted);font-size:13px}
 .note{color:var(--muted);font-size:13px;margin-top:12px}
+/* 1:1, plans, 9-box */
+textarea{width:100%;min-height:96px;font:inherit;font-size:14px;padding:10px;border:1px solid var(--line);border-radius:8px;background:var(--paper);color:var(--ink)}
+.agent-note{font-size:12px;color:var(--muted);margin:-6px 0 10px}
+.pos{color:var(--ok);font-weight:600}.neg{color:var(--risk);font-weight:600}
+.spark{display:block}
+.spark polyline{fill:none;stroke:var(--accent);stroke-width:1.5}
+.spark line{stroke:var(--muted);stroke-width:1;stroke-dasharray:2 2}
+.ninebox{display:grid;grid-template-columns:110px repeat(3,1fr);grid-auto-rows:minmax(132px,auto);gap:8px;min-width:640px}
+.ninebox .xrow{min-height:0}
+.tick{display:flex;align-items:center;color:var(--muted);font-size:13px}
+.tick.x{justify-content:center;min-height:32px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px}
+.box h3{font-size:14px;margin:0 0 2px}
+.box p{margin:0 0 10px;color:var(--muted);font-size:12px}
+.box.hot{background:var(--accent-soft);border-color:var(--accent)}
+.box.cold{background:var(--risk-soft);border-color:var(--risk)}
+.chip{display:inline-block;margin:0 6px 6px 0;padding:4px 10px;border-radius:14px;background:var(--card);border:1px solid var(--line);font-size:13px;text-decoration:none;color:var(--ink)}
+.chip:hover{border-color:var(--accent)}
+.axis-note{color:var(--muted);font-size:13px;margin:12px 0 24px;max-width:75ch}
 @media (max-width:800px){.badges,.grid2,.stats{grid-template-columns:1fr}.rail::before,.badge::before{display:none}.rail{padding-top:16px}.profile-head{grid-template-columns:56px 1fr}.profile-head .mono{width:56px;height:56px}.profile-head>.btns{grid-column:1/-1}.stats{grid-template-columns:1fr 1fr}}
 </style>
 </head>
@@ -104,6 +123,10 @@ button.primary{background:var(--accent);border-color:var(--accent);color:var(--c
 <nav class="tabs" aria-label="Dashboard views">
   <a href="#org">Org chart</a>
   <a href="#profile">Employee profile</a>
+  <a href="#oneonone">1:1s</a>
+  <a href="#plans">Plans vs. actuals</a>
+  <a href="#ninebox">9-box</a>
+  <a href="#pip">Improvement plans</a>
   <a href="#inbox">Escalation inbox<span class="count" id="inbox-count">4</span></a>
   <a href="#team">Team vs. human baseline</a>
 </nav>
@@ -111,7 +134,7 @@ button.primary{background:var(--accent);border-color:var(--accent);color:var(--c
 
 <section class="view" id="view-org">
   <h1>Your team</h1>
-  <p class="lead">Six agents processed 200 claims this week. Four items need your decision, and one agent is below target.</p>
+  <p class="lead">Six agents processed 200 claims this week. Four items need your decision, and one agent is below target and on an improvement plan.</p>
   <div class="chart">
     <div class="lead-card human"><strong>Mandeep Singh</strong><small>Director, Claims Operations (you)</small></div>
     <div class="stem"></div>
@@ -123,7 +146,7 @@ button.primary{background:var(--accent);border-color:var(--accent);color:var(--c
       <a class="badge s-ok" href="#profile"><div class="strap"></div><div class="badge-body"><div class="mono">CD</div><div><div class="title">Clinical Documentation Specialist</div><div class="sub">Clinical Review Agent, ID CLN-2.0</div></div></div><div class="kpi"><span>Extraction accuracy</span><b>96.1%</b></div><div class="foot"><span class="pill p-ok">Meets</span><span>0 escalations</span></div></a>
       <a class="badge s-ok" href="#profile"><div class="strap"></div><div class="badge-body"><div class="mono">MC</div><div><div class="title">Certified Medical Coder</div><div class="sub">Coding Agent, ID COD-2.2</div></div></div><div class="kpi"><span>ICD-10 accuracy</span><b>97.2%</b></div><div class="foot"><span class="pill p-ex">Exceeds</span><span>1 escalation</span></div></a>
       <a class="badge s-ok" href="#profile"><div class="strap"></div><div class="badge-body"><div class="mono">PA</div><div><div class="title">Pricing Analyst</div><div class="sub">Pricing Agent, ID PRC-1.0</div></div></div><div class="kpi"><span>Priced correctly</span><b>99.7%</b></div><div class="foot"><span class="pill p-ok">Meets</span><span>1 escalation</span></div></a>
-      <a class="badge s-risk" href="#profile"><div class="strap"></div><div class="badge-body"><div class="mono">BS</div><div><div class="title">Billing Specialist</div><div class="sub">Submission Agent, ID SUB-1.2</div></div></div><div class="kpi"><span>First-pass acceptance</span><b>86%</b></div><div class="foot"><span class="pill p-risk">Below</span><span>1 escalation</span></div></a>
+      <a class="badge s-risk" href="#pip"><div class="strap"></div><div class="badge-body"><div class="mono">BS</div><div><div class="title">Billing Specialist</div><div class="sub">Submission Agent, ID SUB-1.2</div></div></div><div class="kpi"><span>First-pass acceptance</span><b>86%</b></div><div class="foot"><span class="pill p-risk">Below</span><span>1 escalation</span></div></a>
     </div></div>
     <p class="partner">Claims go to the mock insurer, an external partner. Select any agent to open their profile.</p>
   </div>
@@ -180,6 +203,153 @@ button.primary{background:var(--accent);border-color:var(--accent);color:var(--c
   </div>
 </section>
 
+<section class="view" id="view-oneonone">
+  <div class="profile-head">
+    <div class="mono">BS</div>
+    <div>
+      <h1>Weekly 1:1: Billing Specialist</h1>
+      <div class="facts"><span>Week of Nov 23, 2026</span><span>15 minutes</span><span>On an <a href="#pip">improvement plan</a>, week 1 of 4</span></div>
+    </div>
+    <div class="btns"><button class="primary" type="button">Save 1:1 notes</button><button type="button">Schedule next 1:1</button></div>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <h2>Agent’s update</h2>
+      <p class="agent-note">Written by the agent from its own work log before the meeting.</p>
+      <p style="margin:0 0 10px">I submitted 200 claims this week. 86% were accepted on first pass, up from 83% last week, still short of the 90% target.</p>
+      <p style="margin:0">Of 28 denials, 17 came from diagnosis and procedure pairs I received from coding. The other 11 were my own errors, mostly missing modifiers.</p>
+    </div>
+    <div class="panel">
+      <h2>Since the last 1:1</h2>
+      <ul class="plan">
+        <li>Done: modifier rules added to job instructions (version 1.2)</li>
+        <li>Done: daily accuracy report switched on</li>
+        <li>Not done: modifier-check tool, still in development</li>
+      </ul>
+      <h2 style="margin-top:20px">Blocker raised</h2>
+      <p style="margin:0">Coding pairs routine-exam diagnoses with cardiology procedures. This is a cross-team issue: it needs a fix in the Certified Medical Coder’s instructions, not mine.</p>
+    </div>
+    <div class="panel">
+      <h2>Agenda</h2>
+      <ul class="plan">
+        <li>Progress against the improvement plan</li>
+        <li>The coding blocker and who owns the fix</li>
+        <li>Guardrails: keep manager approval on claims over $2,000?</li>
+      </ul>
+      <h2 style="margin-top:20px">Your notes</h2>
+      <textarea aria-label="Your 1:1 notes">Good trend. Own errors are the focus; coding issue goes to the Coder’s 1:1.</textarea>
+    </div>
+    <div class="panel">
+      <h2>Action items</h2>
+      <div class="scroll"><table><thead><tr><th>Action</th><th>Owner</th><th>Due</th></tr></thead><tbody>
+        <tr><td>Check modifiers before every submission</td><td>Billing Specialist (version 1.3)</td><td>Dec 1</td></tr>
+        <tr><td>Add a diagnosis-procedure pairing rule</td><td>Certified Medical Coder</td><td>Dec 1</td></tr>
+        <tr><td>Review first-pass rate at checkpoint</td><td>You</td><td>Dec 7</td></tr>
+      </tbody></table></div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="view-plans">
+  <h1>Performance plans vs. actuals</h1>
+  <p class="lead">Quarter-to-date results (Q4 2026) for each agent’s main goals. Five of seven goals are on plan; two need attention.</p>
+  <div class="panel"><div class="scroll"><table>
+    <thead><tr><th>Agent</th><th>Goal</th><th>Plan</th><th>Actual</th><th>Variance</th><th>Last 8 weeks</th><th>Rating</th></tr></thead>
+    <tbody>
+      <tr><td>Certified Medical Coder</td><td>ICD-10 accuracy</td><td>95%</td><td>97.2%</td><td class="pos">+2.2 pts</td><td><svg class="spark" width="80" height="24" viewBox="0 0 80 24" aria-label="Rising trend"><line x1="0" y1="12" x2="80" y2="12"/><polyline points="0,18 11,17 22,15 33,14 44,12 55,10 66,8 80,6"/></svg></td><td><span class="pill p-ex">Exceeds</span></td></tr>
+      <tr><td>Certified Medical Coder</td><td>CPT accuracy</td><td>95%</td><td>96.0%</td><td class="pos">+1.0 pts</td><td><svg class="spark" width="80" height="24" viewBox="0 0 80 24" aria-label="Slowly rising trend"><line x1="0" y1="12" x2="80" y2="12"/><polyline points="0,15 11,14 22,15 33,12 44,12 55,11 66,10 80,9"/></svg></td><td><span class="pill p-ok">Meets</span></td></tr>
+      <tr><td>Clinical Documentation Specialist</td><td>Extraction accuracy</td><td>95%</td><td>96.1%</td><td class="pos">+1.1 pts</td><td><svg class="spark" width="80" height="24" viewBox="0 0 80 24" aria-label="Steady trend"><line x1="0" y1="12" x2="80" y2="12"/><polyline points="0,11 11,10 22,11 33,9 44,10 55,9 66,9 80,8"/></svg></td><td><span class="pill p-ok">Meets</span></td></tr>
+      <tr><td>Intake Clerk</td><td>Parse success</td><td>99%</td><td>99.4%</td><td class="pos">+0.4 pts</td><td><svg class="spark" width="80" height="24" viewBox="0 0 80 24" aria-label="Flat trend"><line x1="0" y1="12" x2="80" y2="12"/><polyline points="0,10 11,10 22,9 33,10 44,10 55,9 66,10 80,10"/></svg></td><td><span class="pill p-ok">Meets</span></td></tr>
+      <tr><td>Pricing Analyst</td><td>Priced correctly</td><td>99.5%</td><td>99.7%</td><td class="pos">+0.2 pts</td><td><svg class="spark" width="80" height="24" viewBox="0 0 80 24" aria-label="Flat trend"><line x1="0" y1="12" x2="80" y2="12"/><polyline points="0,11 11,11 22,10 33,11 44,10 55,10 66,11 80,10"/></svg></td><td><span class="pill p-ok">Meets</span></td></tr>
+      <tr><td>Claims Validator</td><td>Missed problems (lower is better)</td><td>Under 1%</td><td>1.6%</td><td class="neg">0.6 pts over</td><td><svg class="spark" width="80" height="24" viewBox="0 0 80 24" aria-label="Worsening trend"><line x1="0" y1="12" x2="80" y2="12"/><polyline points="0,9 11,10 22,10 33,12 44,13 55,14 66,15 80,16"/></svg></td><td><span class="pill p-watch">Watch</span></td></tr>
+      <tr><td>Billing Specialist</td><td>First-pass acceptance</td><td>90%</td><td>86%</td><td class="neg">−4.0 pts</td><td><svg class="spark" width="80" height="24" viewBox="0 0 80 24" aria-label="Dipped then recovering"><line x1="0" y1="8" x2="80" y2="8"/><polyline points="0,10 11,12 22,15 33,18 44,20 55,19 66,17 80,15"/></svg></td><td><span class="pill p-risk">Below</span></td></tr>
+    </tbody></table></div>
+    <p class="note">The dashed line in each trend is the plan. Plans are set by you each quarter under Adjust goals.</p>
+  </div>
+</section>
+
+<section class="view" id="view-ninebox">
+  <h1>9-box talent review</h1>
+  <p class="lead">Each agent placed by current performance against goals and by potential to take on more autonomy or harder cases.</p>
+  <div class="scroll"><div class="ninebox">
+    <div class="tick">High potential</div>
+    <div class="box"><h3>Develop</h3><p>Promising but not delivering yet</p></div>
+    <div class="box"><h3>Grow</h3><p>Give harder cases</p><a class="chip" href="#profile">Clinical Documentation Specialist</a></div>
+    <div class="box hot"><h3>Promote: more autonomy</h3><p>Fewer approvals needed</p><a class="chip" href="#profile">Certified Medical Coder</a></div>
+    <div class="tick">Medium potential</div>
+    <div class="box cold"><h3>Improvement plan</h3><p>Fixable with support and guardrails</p><a class="chip" href="#pip">Billing Specialist</a></div>
+    <div class="box"><h3>Core contributor</h3><p>Steady; watch closely</p><a class="chip" href="#profile">Claims Validator</a></div>
+    <div class="box"><h3>Expand scope</h3><p>Take on adjacent work</p><a class="chip" href="#profile">Pricing Analyst</a></div>
+    <div class="tick">Low potential</div>
+    <div class="box"><h3>Replace version</h3><p>Retire and deploy a better one</p></div>
+    <div class="box"><h3>Maintain</h3><p>Keep as is</p></div>
+    <div class="box"><h3>Trusted specialist</h3><p>At its ceiling, reliable</p><a class="chip" href="#profile">Intake Clerk</a></div>
+    <div></div>
+    <div class="tick x">Low performance</div>
+    <div class="tick x">Moderate performance</div>
+    <div class="tick x">High performance</div>
+  </div></div>
+  <p class="axis-note">Performance is this quarter’s results against plan. Potential combines the eight-week accuracy trend, accuracy on hard cases, and how often the agent’s escalations were truly needed.</p>
+  <div class="panel"><h2>Recommended actions</h2><div class="scroll"><table>
+    <thead><tr><th>Agent</th><th>Box</th><th>Action for you to approve</th></tr></thead>
+    <tbody>
+      <tr><td>Certified Medical Coder</td><td>Promote</td><td>Lower its escalation threshold from 0.85 to 0.80</td></tr>
+      <tr><td>Clinical Documentation Specialist</td><td>Grow</td><td>Route multi-condition notes to it</td></tr>
+      <tr><td>Pricing Analyst</td><td>Expand scope</td><td>Also price modifiers</td></tr>
+      <tr><td>Claims Validator</td><td>Core contributor</td><td>Weekly check on missed problems</td></tr>
+      <tr><td>Billing Specialist</td><td>Improvement plan</td><td>Continue the four-week plan</td></tr>
+      <tr><td>Intake Clerk</td><td>Trusted specialist</td><td>No change</td></tr>
+    </tbody></table></div></div>
+</section>
+
+<section class="view" id="view-pip">
+  <div class="profile-head">
+    <div class="mono">BS</div>
+    <div>
+      <h1>Improvement plan: Billing Specialist</h1>
+      <div class="facts"><span>Started Nov 24, 2026</span><span>Ends Dec 22, 2026</span><span>Owner: you</span><span class="pill p-watch">Week 1 of 4</span></div>
+    </div>
+    <div class="btns"><button class="primary" type="button">Record checkpoint</button><button type="button">Close plan</button></div>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <h2>Why this plan</h2>
+      <p style="margin:0">First-pass acceptance has been below the 90% target for two weeks (83%, then 86%). 11 of 28 denials this week were the agent’s own errors, mostly missing modifiers.</p>
+    </div>
+    <div class="panel">
+      <h2>Weekly checkpoints</h2>
+      <div class="scroll"><table><thead><tr><th>Week ending</th><th>Target</th><th>Actual</th><th>Status</th></tr></thead><tbody>
+        <tr><td>Nov 30</td><td>87%</td><td>86% so far</td><td><span class="pill p-watch">In progress</span></td></tr>
+        <tr><td>Dec 7</td><td>88%</td><td></td><td></td></tr>
+        <tr><td>Dec 14</td><td>89%</td><td></td><td></td></tr>
+        <tr><td>Dec 21</td><td>90%</td><td></td><td></td></tr>
+      </tbody></table></div>
+    </div>
+    <div class="panel">
+      <h2>Support provided</h2>
+      <ul class="plan">
+        <li>Modifier rules added to its job instructions</li>
+        <li>New tool: modifier checker before each submission</li>
+        <li>Upstream fix requested from the Certified Medical Coder</li>
+      </ul>
+      <h2 style="margin-top:20px">Guardrails during the plan</h2>
+      <ul class="plan">
+        <li>You approve any claim over $2,000 before it is sent</li>
+        <li>Escalate any claim with an uncertain modifier</li>
+        <li>Daily accuracy report to you</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <h2>Possible outcomes</h2>
+      <ul class="plan">
+        <li><strong>Success:</strong> 90% or better for two weeks in a row. The plan closes and guardrails are removed.</li>
+        <li><strong>Partial:</strong> clear progress but short of 90%. Extend two weeks.</li>
+        <li><strong>Not met:</strong> retire version 1.2 and deploy a retrained version 1.3.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
 <section class="view" id="view-inbox">
   <h1>Escalation inbox</h1>
   <p class="lead">Your agents stopped and asked about these claims. Each shows the agent’s reasoning so you can decide quickly.</p>
@@ -221,7 +391,7 @@ button.primary{background:var(--accent);border-color:var(--accent);color:var(--c
 
 </main>
 <script>
-const views=["org","profile","inbox","team"];
+const views=["org","profile","oneonone","plans","ninebox","pip","inbox","team"];
 function show(){const h=(location.hash||"#org").slice(1);const v=views.includes(h)?h:"org";
   views.forEach(n=>document.getElementById("view-"+n).classList.toggle("on",n===v));
   document.querySelectorAll("nav.tabs a").forEach(a=>{if(a.getAttribute("href")==="#"+v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
