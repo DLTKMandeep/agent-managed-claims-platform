@@ -1,13 +1,11 @@
 # Stage 3: Design (Dev, part 1)
 
 **Phase:** Construction
-**Status:** Proposed, awaiting manager approval
+**Status:** Approved by the manager on 2026-11-24
 
-The platform is run like a department: a human manager leads a team of AI agents organized as an org chart, and manages them with the same cadence used for people. Technically, it is a Python backend where each agent is a Claude-powered employee with a job description, typed inputs and outputs, and an escalation rule, plus a React dashboard for the manager. No code is written until this design is approved.
+The platform is run like a department: a human manager leads a team of AI agents organized as an org chart, and manages them with the same cadence used for people. Technically, it is a Python backend where each agent is a Claude-powered employee with a job description, typed inputs and outputs, and an escalation rule, plus a React dashboard. The approved dashboard design is in [`ux/`](../ux/).
 
 ## The org chart
-
-Every agent is an employee on the team. The human manager owns the department, the orchestrator acts as the team's supervisor, and six specialists each do one job.
 
 ```mermaid
 flowchart TD
@@ -32,7 +30,7 @@ flowchart TD
 
 ### Team roster
 
-| Agent | Job title | Human role it represents | Reports to | Seniority (model) |
+| Agent | Job title | Comparable human role | Reports to | Seniority (model) |
 | --- | --- | --- | --- | --- |
 | Orchestrator | Operations Supervisor | Team lead who assigns and tracks work | Manager | Rule-based, no model |
 | Intake Agent | Intake Clerk | Front-desk records clerk | Orchestrator | Junior (`claude-haiku-5-5`) |
@@ -42,7 +40,7 @@ flowchart TD
 | Pricing Agent | Pricing Analyst | Analyst applying the fee schedule | Orchestrator | Junior (`claude-haiku-5-5`) |
 | Submission Agent | Billing Specialist | Billing specialist who files claims | Orchestrator | Junior (`claude-haiku-5-5`) |
 
-Seniority maps to the model: simple, rule-following jobs get a faster, cheaper model; judgment-heavy jobs get a stronger one, the way a team pairs junior staff with routine work and senior staff with complex cases. Model names are configurable ([model docs](https://docs.claude.com/en/docs/about-claude/models/overview)).
+Seniority maps to the model: simple, rule-following jobs get a faster, cheaper model; judgment-heavy jobs get a stronger one. Model names are configurable ([model docs](https://docs.claude.com/en/docs/about-claude/models/overview)). Job titles describe each agent's role; they are an analogy for managing the work, not a claim that agents replace people.
 
 ### The employee lifecycle, for agents
 
@@ -52,30 +50,31 @@ Seniority maps to the model: simple, rule-following jobs get a faster, cheaper m
 | Onboarding | Its system prompt (job description), tools and access rights |
 | Training | Updating its prompt, examples or data dictionary |
 | Daily check-ins | The escalation inbox: questions the agent brings to the manager |
-| Weekly 1:1 | Reviewing each agent's KPI trend for the week |
+| Weekly 1:1 | The agent's own written update, KPI trend, blockers and action items |
 | Quarterly goals | KPI targets set and adjusted by the manager |
+| Talent review | The 9-box: performance vs. potential, with a recommended action |
 | Annual review | The scorecard: goals versus actuals, rating, skills, development plan |
 | Promotion | More autonomy: a lower escalation threshold, fewer approvals needed |
-| Performance improvement plan | Tighter guardrails, more escalation, closer review |
-| Replacement | Retiring an agent version and deploying a better one |
+| Improvement plan | Time-boxed checkpoints, extra support, tighter guardrails |
+| Retiring a version | Replacing an agent version with a better one |
 
 ### The manager's cadence
 
 | Cadence | What the manager does | Where in the dashboard |
 | --- | --- | --- |
 | Daily | Clears the escalation inbox | Escalation inbox |
-| Weekly | Checks each agent's KPIs and trend, like a 1:1 | Agent profile |
-| Quarterly | Reviews goals and adjusts targets | Goals settings |
-| Yearly | Signs off each agent's annual review and development plan | Scorecards |
+| Weekly | Runs a 1:1 with each agent | 1:1s, Employee profile |
+| Quarterly | Reviews plans vs. actuals and the 9-box; adjusts goals | Plans vs. actuals, 9-box |
+| Yearly | Signs off each agent's annual review and development plan | Employee profile |
 
-The manager stays accountable for results. Agents do the work; the manager owns the outcome, as with any human team.
+The manager stays accountable for results. Agents do the work; the manager owns the outcome.
 
 ## Architecture
 
 ```
                  +----------------------------+
                  | Manager dashboard (React)  |
-                 | org chart | inbox | profiles | team view
+                 | personas: executive, manager, engineering
                  +-------------+--------------+
                                | REST API
                  +-------------v--------------+
@@ -84,13 +83,13 @@ The manager stays accountable for results. Agents do the work; the manager owns 
                                |
                  +-------------v--------------+
                  | Orchestrator (supervisor)  |---- escalations ----> Manager inbox
-                 +-------------+--------------+
+                 +-------------+--------------+---- deviations ----> GitHub issues
                                |
   Intake -> Validation -> Clinical review -> Medical coding -> Pricing -> Submission
                                |                                            |
                  +-------------v---------------+                 +------------v-----------+
                  | SQLite: claims, decisions,  |                 |  Mock insurer service  |
-                 | escalations, scorecards     |                 +------------------------+
+                 | escalations, reviews        |                 +------------------------+
                  +-----------------------------+
 
   Synthetic data generator --> records + hidden answer key --> Test stage and scorecards
@@ -98,14 +97,13 @@ The manager stays accountable for results. Agents do the work; the manager owns 
 
 ## Manager dashboard
 
-The dashboard opens on the **org chart**. Each agent appears as an employee card showing its title, current status against goals (green, amber, red) and open escalations. Clicking a card opens that agent's **employee profile**.
+The approved mockup is [`ux/dashboard-mockup.html`](../ux/dashboard-mockup.html), styled by [`ux/theme.css`](../ux/theme.css). Screens and personas are described in [`ux/README.md`](../ux/README.md).
 
-| View | What it shows |
-| --- | --- |
-| Org chart (home) | The team, each agent's health against goals, claims in flight |
-| Employee profile | Job description, goals, KPIs, false positive and false negative rates, skills by specialty, review history, development plan |
-| Escalation inbox | Items waiting for the manager, with the agent's reasoning and approve, correct or reject actions |
-| Team view | Agent team versus the human baseline: headcount equivalent, time, cost, error rate |
+| Persona | Lands on | Views |
+| --- | --- | --- |
+| Executive | Executive summary | Executive summary, plans vs. actuals, 9-box, fix roadmap, before and after |
+| Claims manager | Org chart | All views |
+| Engineering lead | Fix roadmap | Fix roadmap, employee profile, plans vs. actuals, escalation inbox |
 
 ## Tech stack
 
@@ -116,18 +114,17 @@ The dashboard opens on the **org chart**. Each agent appears as an employee card
 | Structured output | Pydantic schemas for every handoff | Handoffs are contracts; bad output is caught, not passed on |
 | API | FastAPI | Simple, typed, auto-generated API docs |
 | Storage | SQLite | Zero setup; enough for a prototype |
-| Dashboard | React + Vite + Tailwind | Fast to build, easy to demo |
+| Dashboard | React + Vite, styled with `ux/theme.css` | Matches the approved mockup |
+| Issue tracking | GitHub issues via the GitHub API | Target deviations tracked where engineers already work |
 | Tests | pytest | Standard |
 | Packaging | Docker Compose | One command to run everything |
 
 ## Agent design
 
-Every agent follows the same contract, mirroring an employee role:
-
 | Employee element | Implementation |
 | --- | --- |
 | Job description | System prompt in `agents/prompts/<agent>.md` |
-| Employee profile | `agents/roster.yaml`: title, human role, reports to, seniority, version |
+| Employee profile | `agents/roster.yaml`: title, comparable role, reports to, seniority, version |
 | Inputs and deliverables | Pydantic models in `agents/schemas.py` |
 | When to ask the manager | Escalation rule checked after each decision (e.g. coding confidence below 0.85) |
 | Work log | Every decision saved with reasoning, model, latency and cost |
@@ -136,7 +133,7 @@ Every agent follows the same contract, mirroring an employee role:
 ## Two run modes
 
 - **Live mode:** agents call Claude. Used for the real demo and the Test stage.
-- **Simulated mode:** agents return scripted results with tunable error rates, no API key needed. Used for unit tests, offline demos, and showing how an employee profile reacts when an agent underperforms.
+- **Simulated mode:** agents return scripted results with tunable error rates, no API key needed. Used for unit tests, offline demos, and showing how a profile reacts when an agent underperforms.
 
 ## Data model
 
@@ -146,39 +143,39 @@ Every agent follows the same contract, mirroring an employee role:
 | `decisions` | One row per agent decision: input, output, reasoning, confidence, latency, cost |
 | `escalations` | Items sent to the manager, and the manager's decision |
 | `answer_key` | Correct validity, codes and price per claim; never visible to agents |
-| `code_set` | About 40 ICD-10 and 40 CPT codes in use |
+| `code_set` | 40 ICD-10 and 40 CPT codes in use |
 | `fee_schedule` | Internal price per CPT code, plus modifier rules |
 | `insurer_responses` | Accept or deny, with reason and the agent responsible |
 | `goals` | KPI targets per agent, editable by the manager |
+| `one_on_ones` | Weekly 1:1 records: agent update, notes, action items |
+| `improvement_plans` | Plan, checkpoints, guardrails, outcome |
+| `deviation_issues` | Link between a missed target and its GitHub issue |
 | `reviews` | Signed-off reviews per agent and period, with rating and development plan |
-
-Scorecards are computed from `decisions`, `escalations` and `answer_key`, so they always reflect real results.
 
 ## Repository layout
 
 ```
 aidlc/            Approved AI-DLC artifacts
 agents/           Roster, six worker agents, prompts, schemas
-orchestrator/     Supervisor: pipeline runner and escalation routing
+orchestrator/     Supervisor: pipeline runner, escalation routing, GitHub issues
 insurer/          Mock insurer rules
 data/             Synthetic data generator, code set, fee schedule
-scoring/          KPI, scorecard and review calculations
+scoring/          KPI, scorecard, 9-box and review calculations
 api/              FastAPI server
 dashboard/        React manager dashboard
+ux/               Approved mockup, CSS theme, design notes
 tests/            pytest suites
 ```
 
 ## Build plan (bolts)
 
-AI-DLC works in short cycles called bolts. Each ends with a commit and a working, testable piece.
-
-1. Synthetic data generator, code set, fee schedule and answer key
+1. Synthetic data generator, code set, fee schedule and answer key (done)
 2. Agent framework and team roster, plus intake and validation agents
 3. Clinical review and medical coding agents
 4. Pricing and submission agents, plus the mock insurer
-5. Orchestrator and escalation inbox
-6. Scoring engine, scorecards and reviews
-7. Manager dashboard with org chart and employee profiles
+5. Orchestrator, escalation inbox and automatic GitHub issues
+6. Scoring engine: scorecards, plans vs. actuals, 9-box, reviews
+7. Manager dashboard with personas, matching the approved mockup
 
 ## Risks
 
@@ -187,12 +184,12 @@ AI-DLC works in short cycles called bolts. Each ends with a commit and a working
 | Model output drifts from schema | Pydantic validation with one automatic retry, then escalate |
 | API cost during repeated tests | Simulated mode for most tests; live runs capped at 200 claims |
 | Synthetic notes too easy, inflating accuracy | Generator includes vague, contradictory and unusual notes at about 30% |
-| Viewers mistake it for a real billing system | "Synthetic data, prototype only" banner on every dashboard page |
+| Viewers mistake it for a real billing system | "Synthetic data, prototype only" banner and AI illustration disclaimers on every page |
 
-## Decisions for the manager
+## Decisions for the manager (approved 2026-11-24)
 
-- [ ] Approve the org chart, job titles and management cadence
-- [ ] Approve the tech stack (Python, FastAPI, SQLite, React)
-- [ ] Approve per-agent seniority (model defaults)
-- [ ] Approve the two run modes
-- [ ] Approve the seven-bolt build plan
+- [x] Approve the org chart, job titles and management cadence
+- [x] Approve the tech stack (Python, FastAPI, SQLite, React)
+- [x] Approve per-agent seniority (model defaults)
+- [x] Approve the two run modes
+- [x] Approve the seven-bolt build plan
