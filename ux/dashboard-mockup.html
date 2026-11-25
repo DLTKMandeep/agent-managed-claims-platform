@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Claims Operations: Manager Dashboard (mockup)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--paper:#F3F6F5;--card:#FFFFFF;--ink:#1B2A3A;--muted:#5C6B78;--line:#D5DDE2;--accent:#2F5D8A;--accent-soft:#E3ECF5;--ok:#2E7D5B;--ok-soft:#E2F1EA;--watch:#9A6412;--watch-soft:#F7ECD9;--risk:#B3403A;--risk-soft:#F6E1DF;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--paper:#141B22;--card:#1C252E;--ink:#E6ECF1;--muted:#9AA8B4;--line:#2F3B47;--accent:#8FB4DA;--accent-soft:#22313F;--ok:#6CC59A;--ok-soft:#1D3229;--watch:#E2B25F;--watch-soft:#3A2F1C;--risk:#EE8A82;--risk-soft:#3B2321;color-scheme:dark}}
+:root[data-theme="dark"]{--paper:#141B22;--card:#1C252E;--ink:#E6ECF1;--muted:#9AA8B4;--line:#2F3B47;--accent:#8FB4DA;--accent-soft:#22313F;--ok:#6CC59A;--ok-soft:#1D3229;--watch:#E2B25F;--watch-soft:#3A2F1C;--risk:#EE8A82;--risk-soft:#3B2321;color-scheme:dark}
+*{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--paper);color:var(--ink);font:15px/1.55 "Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-variant-numeric:tabular-nums}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.banner{background:var(--accent-soft);color:var(--ink);font-size:13px;padding:6px 20px;text-align:center}
+header.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;padding:16px 24px;border-bottom:1px solid var(--line);background:var(--card)}
+.dept{font-weight:700;font-size:17px}
+.who{color:var(--muted);font-size:14px}
+nav.tabs{display:flex;gap:4px;padding:0 24px;border-bottom:1px solid var(--line);background:var(--card);overflow-x:auto}
+nav.tabs a{padding:12px 14px;text-decoration:none;color:var(--muted);font-weight:500;border-bottom:3px solid transparent;white-space:nowrap}
+nav.tabs a[aria-current="page"]{color:var(--ink);border-bottom-color:var(--accent)}
+.count{display:inline-block;min-width:20px;padding:0 6px;margin-left:6px;border-radius:10px;background:var(--risk);color:var(--card);font-size:12px;text-align:center}
+main{max-width:1120px;margin:0 auto;padding:28px 24px 64px}
+h1{font-size:26px;line-height:1.2;margin:0 0 6px}
+h2{font-size:17px;margin:0 0 12px}
+.lead{color:var(--muted);margin:0 0 28px;max-width:70ch}
+section.view{display:none}section.view.on{display:block}
+/* org chart */
+.chart{display:flex;flex-direction:column;align-items:center}
+.lead-card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 22px;text-align:center;min-width:260px}
+.lead-card.human{border:2px solid var(--accent)}
+.lead-card small{display:block;color:var(--muted)}
+.stem{width:2px;height:24px;background:var(--line)}
+.rail{position:relative;width:100%;padding-top:24px}
+.rail::before{content:"";position:absolute;top:0;left:16.6%;right:16.6%;height:2px;background:var(--line)}
+.badges{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.badge{position:relative;display:block;text-decoration:none;color:inherit;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:0 0 16px;overflow:hidden}
+.badge::before{content:"";position:absolute;top:-24px;left:50%;width:2px;height:24px;background:var(--line)}
+.badge:hover{border-color:var(--accent)}
+.strap{height:8px}
+.s-ok .strap{background:var(--ok)}.s-watch .strap{background:var(--watch)}.s-risk .strap{background:var(--risk)}
+.badge-body{display:grid;grid-template-columns:52px 1fr;gap:12px;padding:16px 16px 0}
+.mono{width:52px;height:52px;border-radius:50%;display:grid;place-items:center;font-weight:700;background:var(--accent-soft);color:var(--accent)}
+.title{font-weight:600;line-height:1.3}
+.sub{color:var(--muted);font-size:13px}
+.kpi{display:flex;justify-content:space-between;align-items:baseline;margin:14px 16px 0;padding-top:12px;border-top:1px dashed var(--line);font-size:14px}
+.kpi b{font-size:18px}
+.pill{display:inline-block;padding:2px 10px;border-radius:12px;font-size:12px;font-weight:600}
+.p-ok{background:var(--ok-soft);color:var(--ok)}.p-watch{background:var(--watch-soft);color:var(--watch)}.p-risk{background:var(--risk-soft);color:var(--risk)}.p-ex{background:var(--accent-soft);color:var(--accent)}
+.foot{display:flex;justify-content:space-between;margin:10px 16px 0;font-size:13px;color:var(--muted)}
+.partner{margin-top:28px;color:var(--muted);font-size:14px;text-align:center}
+/* profile */
+.profile-head{display:grid;grid-template-columns:72px 1fr auto;gap:18px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px;margin-bottom:20px}
+.profile-head .mono{width:72px;height:72px;font-size:22px}
+.facts{display:flex;flex-wrap:wrap;gap:6px 20px;color:var(--muted);font-size:14px;margin-top:4px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:20px}
+.goal{display:grid;grid-template-columns:1fr 64px;gap:4px 12px;margin-bottom:14px;font-size:14px}
+.bar{grid-column:1/-1;position:relative;height:8px;border-radius:4px;background:var(--line)}
+.bar i{position:absolute;inset:0 auto 0 0;border-radius:4px;background:var(--ok)}
+.bar i.w{background:var(--watch)}
+.bar em{position:absolute;top:-4px;width:2px;height:16px;background:var(--ink)}
+.goal span:last-of-type{text-align:right;font-weight:600}
+.legend{font-size:12px;color:var(--muted)}
+.errs{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.err{border:1px solid var(--line);border-radius:10px;padding:12px}
+.err b{display:block;font-size:24px}
+ul.plan{margin:0;padding-left:18px}ul.plan li{margin-bottom:8px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:var(--muted);font-weight:500}
+.scroll{overflow-x:auto}
+.btns{display:flex;flex-wrap:wrap;gap:8px}
+button{font:inherit;font-weight:600;font-size:14px;padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+button.primary{background:var(--accent);border-color:var(--accent);color:var(--card)}
+/* inbox */
+.item{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--watch);border-radius:0 12px 12px 0;padding:18px 20px;margin-bottom:14px}
+.item.risk{border-left-color:var(--risk)}
+.item-top{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;margin-bottom:6px}
+.reason{margin:10px 0 14px;padding:12px 14px;background:var(--paper);border-radius:8px;font-size:14px}
+.reason strong{display:block;font-size:12px;color:var(--muted);font-weight:500;margin-bottom:2px}
+.item.done{border-left-color:var(--ok);opacity:.75}
+.item.done .btns{display:none}
+.resolved{display:none;color:var(--ok);font-weight:600}
+.item.done .resolved{display:block}
+/* team */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px}
+.stat b{display:block;font-size:24px;line-height:1.2}
+.stat span{color:var(--muted);font-size:13px}
+.note{color:var(--muted);font-size:13px;margin-top:12px}
+@media (max-width:800px){.badges,.grid2,.stats{grid-template-columns:1fr}.rail::before,.badge::before{display:none}.rail{padding-top:16px}.profile-head{grid-template-columns:56px 1fr}.profile-head .mono{width:56px;height:56px}.profile-head>.btns{grid-column:1/-1}.stats{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div class="banner">Prototype with synthetic data. Not a real billing system.</div>
+<header class="top">
+  <div><div class="dept">Claims Operations</div><div class="who">Mandeep Singh, Director</div></div>
+  <div class="who">Week of Nov 23, 2026</div>
+</header>
+<nav class="tabs" aria-label="Dashboard views">
+  <a href="#org">Org chart</a>
+  <a href="#profile">Employee profile</a>
+  <a href="#inbox">Escalation inbox<span class="count" id="inbox-count">4</span></a>
+  <a href="#team">Team vs. human baseline</a>
+</nav>
+<main>
+
+<section class="view" id="view-org">
+  <h1>Your team</h1>
+  <p class="lead">Six agents processed 200 claims this week. Four items need your decision, and one agent is below target.</p>
+  <div class="chart">
+    <div class="lead-card human"><strong>Mandeep Singh</strong><small>Director, Claims Operations (you)</small></div>
+    <div class="stem"></div>
+    <div class="lead-card"><strong>Orchestrator</strong><small>Operations Supervisor, 200 claims routed</small></div>
+    <div class="stem"></div>
+    <div class="rail"><div class="badges">
+      <a class="badge s-ok" href="#profile"><div class="strap"></div><div class="badge-body"><div class="mono">IC</div><div><div class="title">Intake Clerk</div><div class="sub">Intake Agent, ID INT-1.3</div></div></div><div class="kpi"><span>Parse success</span><b>99.4%</b></div><div class="foot"><span class="pill p-ok">Meets</span><span>0 escalations</span></div></a>
+      <a class="badge s-watch" href="#profile"><div class="strap"></div><div class="badge-body"><div class="mono">CV</div><div><div class="title">Claims Validator</div><div class="sub">Validation Agent, ID VAL-1.1</div></div></div><div class="kpi"><span>Missed problems</span><b>1.6%</b></div><div class="foot"><span class="pill p-watch">Watch</span><span>1 escalation</span></div></a>
+      <a class="badge s-ok" href="#profile"><div class="strap"></div><div class="badge-body"><div class="mono">CD</div><div><div class="title">Clinical Documentation Specialist</div><div class="sub">Clinical Review Agent, ID CLN-2.0</div></div></div><div class="kpi"><span>Extraction accuracy</span><b>96.1%</b></div><div class="foot"><span class="pill p-ok">Meets</span><span>0 escalations</span></div></a>
+      <a class="badge s-ok" href="#profile"><div class="strap"></div><div class="badge-body"><div class="mono">MC</div><div><div class="title">Certified Medical Coder</div><div class="sub">Coding Agent, ID COD-2.2</div></div></div><div class="kpi"><span>ICD-10 accuracy</span><b>97.2%</b></div><div class="foot"><span class="pill p-ex">Exceeds</span><span>1 escalation</span></div></a>
+      <a class="badge s-ok" href="#profile"><div class="strap"></div><div class="badge-body"><div class="mono">PA</div><div><div class="title">Pricing Analyst</div><div class="sub">Pricing Agent, ID PRC-1.0</div></div></div><div class="kpi"><span>Priced correctly</span><b>99.7%</b></div><div class="foot"><span class="pill p-ok">Meets</span><span>1 escalation</span></div></a>
+      <a class="badge s-risk" href="#profile"><div class="strap"></div><div class="badge-body"><div class="mono">BS</div><div><div class="title">Billing Specialist</div><div class="sub">Submission Agent, ID SUB-1.2</div></div></div><div class="kpi"><span>First-pass acceptance</span><b>86%</b></div><div class="foot"><span class="pill p-risk">Below</span><span>1 escalation</span></div></a>
+    </div></div>
+    <p class="partner">Claims go to the mock insurer, an external partner. Select any agent to open their profile.</p>
+  </div>
+</section>
+
+<section class="view" id="view-profile">
+  <div class="profile-head">
+    <div class="mono">MC</div>
+    <div>
+      <h1>Certified Medical Coder</h1>
+      <div class="facts"><span>Coding Agent, ID COD-2.2</span><span>Reports to Operations Supervisor</span><span>Seniority: senior model</span><span>Hired Nov 24, 2026</span></div>
+    </div>
+    <div class="btns"><button class="primary" type="button">Sign off review</button><button type="button">Adjust goals</button></div>
+  </div>
+  <div class="grid2">
+    <div class="panel">
+      <h2>Goals vs. actuals <span class="pill p-ex">Exceeds</span></h2>
+      <div class="goal"><span>ICD-10 accuracy</span><span>97.2%</span><div class="bar"><i style="width:97.2%"></i><em style="left:95%"></em></div></div>
+      <div class="goal"><span>CPT accuracy</span><span>96.0%</span><div class="bar"><i style="width:96%"></i><em style="left:95%"></em></div></div>
+      <div class="goal"><span>Escalation rate (target 5 to 10%)</span><span>7.5%</span><div class="bar"><i style="width:75%"></i><em style="left:50%"></em><em style="left:100%;left:calc(100% - 2px)"></em></div></div>
+      <div class="goal"><span>Average time per claim</span><span>6.2 s</span><div class="bar"><i style="width:21%"></i><em style="left:100%;left:calc(100% - 2px)"></em></div></div>
+      <p class="legend">Dark marks show the target set by you.</p>
+    </div>
+    <div class="panel">
+      <h2>Mistakes this period</h2>
+      <div class="errs">
+        <div class="err"><b>1.4%</b>False positives<div class="sub">Flagged a code as uncertain when it was right</div></div>
+        <div class="err"><b>0.8%</b>False negatives<div class="sub">Chose a wrong code with high confidence</div></div>
+      </div>
+      <h2 style="margin-top:20px">Job description</h2>
+      <p style="margin:0">Reads the clinical summary and assigns ICD-10 diagnosis and CPT procedure codes, each with a confidence score and a one-line justification. Asks you when confidence is below 0.85.</p>
+    </div>
+    <div class="panel">
+      <h2>Skills by specialty</h2>
+      <div class="goal"><span>Dermatology</span><span>99%</span><div class="bar"><i style="width:99%"></i><em style="left:95%"></em></div></div>
+      <div class="goal"><span>Primary care</span><span>98%</span><div class="bar"><i style="width:98%"></i><em style="left:95%"></em></div></div>
+      <div class="goal"><span>Cardiology</span><span>97%</span><div class="bar"><i style="width:97%"></i><em style="left:95%"></em></div></div>
+      <div class="goal"><span>Orthopedics</span><span>91%</span><div class="bar"><i class="w" style="width:91%"></i><em style="left:95%"></em></div></div>
+    </div>
+    <div class="panel">
+      <h2>Development plan</h2>
+      <ul class="plan">
+        <li>Add 20 worked orthopedic examples to the job instructions, focused on fracture vs. sprain.</li>
+        <li>Give access to the laterality lookup tool (left vs. right limb codes).</li>
+        <li>Review orthopedics accuracy again in four weeks.</li>
+      </ul>
+      <h2 style="margin-top:20px">Review history</h2>
+      <div class="scroll"><table><thead><tr><th>Period</th><th>Version</th><th>Rating</th></tr></thead><tbody>
+        <tr><td>Week of Nov 23</td><td>2.2</td><td><span class="pill p-ex">Exceeds</span></td></tr>
+        <tr><td>Week of Nov 16</td><td>2.1</td><td><span class="pill p-ok">Meets</span></td></tr>
+        <tr><td>Week of Nov 9</td><td>2.0</td><td><span class="pill p-watch">Watch</span></td></tr>
+      </tbody></table></div>
+    </div>
+  </div>
+</section>
+
+<section class="view" id="view-inbox">
+  <h1>Escalation inbox</h1>
+  <p class="lead">Your agents stopped and asked about these claims. Each shows the agent’s reasoning so you can decide quickly.</p>
+  <div class="item"><div class="item-top"><strong>Certified Medical Coder: low confidence (0.72)</strong><span class="sub">Claim CLM-10482, orthopedics</span></div>
+    <div class="reason"><strong>Agent’s reasoning</strong>The note says “possible fracture” and later “ankle sprain, X-ray negative.” I proposed S93.401A (sprain) but the earlier wording could support a fracture code.</div>
+    <div class="btns"><button class="primary" type="button" data-act="Approved">Approve S93.401A</button><button type="button" data-act="Corrected">Correct code</button><button type="button" data-act="Rejected">Send back</button></div><div class="resolved"></div></div>
+  <div class="item"><div class="item-top"><strong>Claims Validator: required field missing</strong><span class="sub">Claim CLM-10511, primary care</span></div>
+    <div class="reason"><strong>Agent’s reasoning</strong>Insurance member ID is blank and cannot be found elsewhere in the record.</div>
+    <div class="btns"><button class="primary" type="button" data-act="Approved">Return to provider</button><button type="button" data-act="Corrected">Enter member ID</button></div><div class="resolved"></div></div>
+  <div class="item"><div class="item-top"><strong>Pricing Analyst: code not in data dictionary</strong><span class="sub">Claim CLM-10533, orthopedics</span></div>
+    <div class="reason"><strong>Agent’s reasoning</strong>CPT 29881 (knee arthroscopy) has no price in the internal fee schedule, so I could not price this line.</div>
+    <div class="btns"><button class="primary" type="button" data-act="Approved">Add price to dictionary</button><button type="button" data-act="Rejected">Hold claim</button></div><div class="resolved"></div></div>
+  <div class="item risk"><div class="item-top"><strong>Billing Specialist: insurer denied claim</strong><span class="sub">Claim CLM-10467, cardiology</span></div>
+    <div class="reason"><strong>Agent’s reasoning</strong>Denied for “diagnosis does not support procedure.” Traced to coding: CPT 93306 (echocardiogram) was paired with a routine exam diagnosis.</div>
+    <div class="btns"><button class="primary" type="button" data-act="Sent back to coding">Send back to coding</button><button type="button" data-act="Closed">Close as denied</button></div><div class="resolved"></div></div>
+</section>
+
+<section class="view" id="view-team">
+  <h1>Team vs. human baseline</h1>
+  <p class="lead">The same claims volume, handled by six agents and one manager compared with an assumed six-person team.</p>
+  <div class="stats">
+    <div class="stat"><b>6</b><span>roles covered by agents</span></div>
+    <div class="stat"><b>41 s</b><span>average time per claim, vs. about 25 min</span></div>
+    <div class="stat"><b>2.8%</b><span>error rate, vs. an assumed 5%</span></div>
+    <div class="stat"><b>4 h</b><span>of your time per week on escalations</span></div>
+  </div>
+  <div class="panel"><div class="scroll"><table>
+    <thead><tr><th>Measure</th><th>Human team (assumed)</th><th>Agent team (measured)</th></tr></thead>
+    <tbody>
+      <tr><td>Roles</td><td>Intake clerk, validator, clinical reviewer, coder, pricing analyst, billing specialist</td><td>Six agents, one supervisor agent</td></tr>
+      <tr><td>Time per claim</td><td>About 25 minutes</td><td>41 seconds</td></tr>
+      <tr><td>Cost per claim</td><td>$9.40 loaded labor</td><td>$0.18 model usage</td></tr>
+      <tr><td>Error rate</td><td>5%</td><td>2.8%, checked against the answer key</td></tr>
+      <tr><td>Manager time per week</td><td>Supervising six people</td><td>About 4 hours on escalations</td></tr>
+    </tbody></table></div>
+    <p class="note">Human figures are illustrative assumptions you can edit. Agent figures are sample values for this mockup.</p>
+  </div>
+</section>
+
+</main>
+<script>
+const views=["org","profile","inbox","team"];
+function show(){const h=(location.hash||"#org").slice(1);const v=views.includes(h)?h:"org";
+  views.forEach(n=>document.getElementById("view-"+n).classList.toggle("on",n===v));
+  document.querySelectorAll("nav.tabs a").forEach(a=>{if(a.getAttribute("href")==="#"+v)a.setAttribute("aria-current","page");else a.removeAttribute("aria-current")});
+  window.scrollTo(0,0);}
+window.addEventListener("hashchange",show);show();
+document.querySelectorAll(".item button").forEach(b=>b.addEventListener("click",()=>{const it=b.closest(".item");it.classList.add("done");it.querySelector(".resolved").textContent=b.dataset.act+" by you";
+  const left=document.querySelectorAll(".item:not(.done)").length;const c=document.getElementById("inbox-count");c.textContent=left;c.style.display=left?"":"none";}));
+</script>
+</body>
+</html>
