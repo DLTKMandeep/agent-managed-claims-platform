@@ -1,0 +1,89 @@
+# The team roster: one entry per agent, written like an employee record.
+# version doubles as the employee ID suffix; bump it when the job description,
+# tools or model change, exactly like a new hire replacing an old one.
+
+manager:
+  name: Mandeep Singh
+  title: Director, Claims Operations
+
+agents:
+  orchestrator:
+    agent_name: Orchestrator
+    title: Operations Supervisor
+    comparable_role: Team lead who assigns and tracks work
+    reports_to: manager
+    seniority: rule-based
+    model: null
+    version: "0.0"
+    employee_id: ORC-0.0
+    status: planned        # Bolt 5
+
+  intake:
+    agent_name: Intake Agent
+    title: Intake Clerk
+    comparable_role: Front-desk records clerk
+    reports_to: orchestrator
+    seniority: junior
+    model: claude-haiku-5-5
+    version: "1.0"
+    employee_id: INT-1.0
+    status: deployed
+    prompt: prompts/intake.md
+    simulated_error_rate: 0.0
+
+  validation:
+    agent_name: Validation Agent
+    title: Claims Validator
+    comparable_role: Claims examiner checking completeness
+    reports_to: orchestrator
+    seniority: junior
+    model: claude-haiku-5-5
+    version: "1.0"
+    employee_id: VAL-1.0
+    status: deployed
+    prompt: prompts/validation.md
+    simulated_error_rate: 0.0
+
+  clinical_review:
+    agent_name: Clinical Review Agent
+    title: Clinical Documentation Specialist
+    comparable_role: Nurse reviewer reading physician notes
+    reports_to: orchestrator
+    seniority: senior
+    model: claude-sonnet-5-5
+    version: "0.0"
+    employee_id: CLN-0.0
+    status: planned        # Bolt 3
+
+  coding:
+    agent_name: Coding Agent
+    title: Certified Medical Coder
+    comparable_role: Certified professional coder
+    reports_to: orchestrator
+    seniority: senior
+    model: claude-sonnet-5-5
+    version: "0.0"
+    employee_id: COD-0.0
+    status: planned        # Bolt 3
+
+  pricing:
+    agent_name: Pricing Agent
+    title: Pricing Analyst
+    comparable_role: Analyst applying the fee schedule
+    reports_to: orchestrator
+    seniority: junior
+    model: claude-haiku-5-5
+    version: "0.0"
+    employee_id: PRC-0.0
+    status: planned        # Bolt 4
+
+  submission:
+    agent_name: Submission Agent
+    title: Billing Specialist
+    comparable_role: Billing specialist who files claims
+    reports_to: orchestrator
+    seniority: junior
+    model: claude-haiku-5-5
+    version: "0.0"
+    employee_id: SUB-0.0
+    status: planned        # Bolt 4
