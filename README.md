@@ -2,28 +2,41 @@
 
 A prototype medical claims pipeline run entirely by AI agents, built to show what it means to be a **manager of agents**.
 
-Each agent is treated like an employee: it has a job description, yearly goals, KPIs, quality audits, a skills profile, a performance review and a development plan. The human manager sets goals and guardrails, handles escalations, and reviews performance.
+The platform is run like a department. Each agent is an employee with a job title, a job description, yearly goals, KPIs, a skills profile, a performance review and a development plan. The human manager leads the team with the same cadence used for people: daily escalations, weekly check-ins, quarterly goals and an annual review.
 
 > **Synthetic data only.** No real patients, providers, insurers or billing rules are used anywhere in this project.
 
-## The pipeline
+## The team
 
-```
-Manager (human)
-   |
-Orchestrator agent
-   |
-Intake -> Validation -> Clinical review -> Medical coding -> Pricing -> Submission -> Mock insurer
+```mermaid
+flowchart TD
+    M["Mandeep Singh<br/>Director, Claims Operations<br/><i>Human manager</i>"]
+    O["Orchestrator<br/>Operations Supervisor"]
+    A1["Intake Clerk"]
+    A2["Claims Validator"]
+    A3["Clinical Documentation Specialist"]
+    A4["Certified Medical Coder"]
+    A5["Pricing Analyst"]
+    A6["Billing Specialist"]
+    M --> O
+    O --> A1
+    O --> A2
+    O --> A3
+    O --> A4
+    O --> A5
+    O --> A6
 ```
 
-| Agent | Job |
-| --- | --- |
-| Intake | Standardize incoming records |
-| Validation | Confirm all claim-required fields exist |
-| Clinical review | Extract diagnoses and procedures from the doctor's note |
-| Medical coding | Assign ICD-10 and CPT codes |
-| Pricing | Price each procedure from the internal data dictionary |
-| Submission | Assemble the claim and send it to the mock insurer |
+| Agent | Job title | Job |
+| --- | --- | --- |
+| Intake Agent | Intake Clerk | Standardize incoming records |
+| Validation Agent | Claims Validator | Confirm all claim-required fields exist |
+| Clinical Review Agent | Clinical Documentation Specialist | Extract diagnoses and procedures from the doctor's note |
+| Coding Agent | Certified Medical Coder | Assign ICD-10 and CPT codes |
+| Pricing Agent | Pricing Analyst | Price each procedure from the internal data dictionary |
+| Submission Agent | Billing Specialist | Assemble the claim and send it to the mock insurer |
+
+The full org chart, employee lifecycle and management cadence are in [03-design.md](aidlc/03-design.md).
 
 ## How it is built: AI-DLC
 
